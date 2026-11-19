@@ -4,6 +4,8 @@ A small, dependency-free local dashboard for central management of homelab servi
 
 Runs on **NGINX** on a **Raspberry Pi 5** (host OS: Debian 13 arm64). LAN only.
 
+The dashboard UI example can be found [here](webpage.png).
+
 ## What's inside
 
 | File | Purpose |
@@ -30,20 +32,20 @@ A console bar at the bottom shows the status or result of the last command (gree
 
 ## Setup notes
 
-NGINX has no native CGI, so `run.sh` is served through `fcgiwrap`.
 `run.sh` runs as `www-data`, so the SSH key for the MikroTik `admin` user lives in `/var/www/.ssh` (the `www-data` home directory on Debian).
-Also edit the service URLs in `index.html` to match your network.
+
+Don't forget to edit the service URLs in `index.html` to match your network.
 
 ## Install and deploy
 
-Install the needed services and create empty folders
+Install the needed services and create empty folder
 
 ```bash
 sudo apt install nginx fcgiwrap
 sudo mkdir -p /var/www/dashboard
 ```
 
-Copy index.html, icons/, and cgi-bin/ to /var/www/dashboard. After that, continue with the commands
+Copy `index.html`, `icons/`, and `cgi-bin/` to `/var/www/dashboard`. After that, continue with the commands
 
 ```bash
 sudo chown -R www-data:www-data /var/www/dashboard
