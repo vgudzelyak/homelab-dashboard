@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homelab Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="icons/dashboard.svg">
+  <style>
+    :root {
+      --bg-main: #141923;
+      --bg-card-hover: #131621;
+      --border-section: #202434;
+      --text-main: #dddddd;
+      --text-sub: #8b95b5;
+      --neon-cyan: #00f3ff;
+      --neon-blue: #009dff;
+      --neon-purple: #b537f2;
+      --neon-green: #00ff88;
+      --neon-pink: #ff2a85;
+      --neon-yellow: #fbff2a;
+      --neon-orange: #ffa62a;
+      --console-green: #002815;
+      --console-pink: #3d0920;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      padding: 1.5rem;
+      min-height: 100vh;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 24px;
+    }
+
+    .title img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .section {
+      border: 1px solid var(--border-section);
+      border-radius: 8px;
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header span.icon {
+      display: flex;
+      align-items: center;
+      font-size: 1.2rem;
+    }
+
+    .section-header span.icon img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .card {
+      display: flex;
+      background-color: transparent;
+      align-items: center;
+      gap: 0.9rem;
+      border: 1px solid var(--border-section);
+      border-radius: 6px;
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card.glow-cyan:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.45), inset 0 0 8px rgba(0, 243, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card.glow-purple:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--neon-purple);
+      box-shadow: 0 0 12px rgba(181, 55, 242, 0.45), inset 0 0 8px rgba(181, 55, 242, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card.glow-green:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 12px rgba(0, 255, 136, 0.45), inset 0 0 8px rgba(0, 255, 136, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card.glow-pink:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 12px rgba(255, 42, 133, 0.45), inset 0 0 8px rgba(255, 42, 133, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card.glow-blue:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 12px rgba(0, 157, 255, 0.45), inset 0 0 8px rgba(0, 157, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card.glow-yellow:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--neon-yellow);
+      box-shadow: 0 0 12px rgba(251, 255, 42, 0.45), inset 0 0 8px rgba(251, 255, 42, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card.glow-orange:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--neon-orange);
+      box-shadow: 0 0 12px rgba(255, 166, 42, 0.45), inset 0 0 8px rgba(255, 166, 42, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .card:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .card-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      background: rgba(255, 255, 255, 0.04);
+      flex-shrink: 0;
+    }
+
+    .card-icon img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-desc {
+      font-size: 0.76rem;
+      color: var(--text-sub);
+      margin-top: 2px;
+      line-height: 1.25;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .console-bar {
+      border: 1px solid var(--console-green);
+      border-radius: 8px;
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+      padding: 0.5rem 1rem 0.5rem 1rem;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--neon-green);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .console-bar.error {
+      border-color: var(--console-pink);
+      color: var(--neon-pink);
+    }
+  </style>
+</head>
+<body>
+  <div class="title">
+    <img src="icons/dashboard.svg">
+    <span class="icon-title">
+
+    </span>Homelab Dashboard
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">
+        <img src="icons/networking.svg">
+      </span>Networking
+    </div>
+    <div class="grid">
+      <a class="card glow-pink" href="https://pi.hole" target="_blank">
+        <div class="card-icon">
+          <img src="icons/pi-hole.svg">
+        </div>
+        <div class="card-info">
+          <div class="card-title">Pi-hole</div>
+          <div class="card-desc">DNS ad-blocking</div>
+        </div>
+      </a>
+
+      <a class="card glow-cyan" href="http://router.lan" target="_blank">
+        <div class="card-icon">
+          <img src="icons/mikrotik.svg">
+        </div>
+        <div class="card-info">
+          <div class="card-title">MikroTik</div>
+          <div class="card-desc">RouterOS config</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">
+        <img src="icons/home-control.svg">
+      </span>Home Control
+    </div>
+    <div class="grid">
+      <a class="card glow-orange" href="http://pi.hole:8123" target="_blank">
+        <div class="card-icon">
+          <img src="icons/home-assistant.svg">
+        </div>
+        <div class="card-info">
+          <div class="card-title">Home Assistant</div>
+          <div class="card-desc">Smart home control</div>
+        </div>
+      </a>
+
+      <a class="card glow-purple" href="http://pi.hole:6052" target="_blank">
+        <div class="card-icon">
+          <img src="icons/esphome.svg">
+        </div>
+        <div class="card-info">
+          <div class="card-title">ESPHome</div>
+          <div class="card-desc">Manage smart devices</div>
+        </div>
+      </a>
+
+      <a class="card glow-blue" href="http://fluidd.local" target="_blank">
+        <div class="card-icon">
+          <img src="icons/fluidd.svg">
+        </div>
+        <div class="card-info">
+          <div class="card-title">Fluidd</div>
+          <div class="card-desc">3D printer dashboard</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="icon">
+        <img src="icons/system-automations.svg">
+      </span>System Automations
+    </div>
+    <div class="grid">
+      <button class="card glow-green" onclick="runScript('mikrotik-set-isp1', 'Set the main route to Aermaxnet')">
+        <div class="card-icon">
+          <img src="icons/route-switch.svg">
+        </div>
+        <div class="card-info">
+          <div class="card-title">Set route to ISP1</div>
+          <div class="card-desc">Set the main route to Aermaxnet</div>
+        </div>
+      </button>
+
+      <button class="card glow-yellow" onclick="runScript('mikrotik-set-isp2', 'Set the main route to Starlink')">
+        <div class="card-icon">
+          <img src="icons/route-switch.svg">
+        </div>
+        <div class="card-info">
+          <div class="card-title">Set route to ISP2</div>
+          <div class="card-desc">Set the main route to Starlink</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="console-bar" id="console-bar">
+    <span id="status-text">Waiting for the command to execute the CGI script</span>
+  </div>
+
+  <script>
+    async function runScript(action, label) {
+      const bar = document.getElementById('console-bar');
+      const statusText = document.getElementById('status-text');
+
+      bar.classList.remove('error');
+      statusText.textContent = `Running [${label}] command`;
+
+      try {
+        const res = await fetch(`/cgi-bin/run.sh?cmd=${encodeURIComponent(action)}`, {
+          method: 'POST'
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const output = await res.text();
+        statusText.textContent = `[${label}]: ${output.trim()}`;
+      } catch (err) {
+        bar.classList.add('error');
+        statusText.textContent = `[${label}] Error: ${err.message}`;
+      }
+    }
+  </script>
+
+</body>
+</html>
